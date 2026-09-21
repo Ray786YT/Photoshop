@@ -1,0 +1,149 @@
+I have Adobe Photoshop installed on this computer. I want you to build a magazine
+cover INSIDE Photoshop itself by writing an ExtendScript (.jsx) file and having
+Photoshop run it (File > Scripts > Browse...). Do NOT write the .psd file
+directly with code - Photoshop must do the work so I can watch the layers appear
+and screenshot the process for my teacher.
+
+I am attaching three files:
+  1. The finished cover as a JPG - THIS IS THE TARGET. Match it.
+  2. A .psd of the same cover - open it and read the layer structure.
+  3. The original portrait photo (before any editing).
+
+This is a Grade 11 Media Arts assignment. Please keep every technique at a level
+a 16-year-old can understand and repeat, and explain what each step does as you
+go. I have to be able to tell my teacher how it was made.
+
+=== DOCUMENT ===
+2550 x 3300 px, 8.5in x 11in, 300 ppi, RGB Colour, 8-bit.
+
+=== FONTS (install from Google Fonts first if missing) ===
+Manrope ExtraBold  - PostScript name: Manrope-ExtraBold
+Manrope Medium     - PostScript name: Manrope-Medium
+Roboto Black       - PostScript name: Roboto-Black
+
+=== COLOURS ===
+Acid green    #B8FF3C     Off-white     #F4F6F2
+Bar plate     #E2E6E0     Bar text      #101318
+Deep base     #06080E     Cover line    #EEF1ED
+Selling line  #C6CDC6     Dateline      #CED5CE
+
+=== STEP 1 - PLACE THE PHOTO ===
+Place the portrait, scale it to 2594 x 3220 px, position its top-left corner at
+x = -37, y = 430. This puts the top of the head near y=639, the chin near
+y=2587 and the shoulders near y=2845, with the face centred on x=1275.
+
+=== STEP 2 - REMOVE THE MOUTH (the main manipulation) ===
+Make an elliptical selection centred at (1286, 2282) with radii 338 x 201,
+feather about 20 px, then Edit > Content-Aware Fill (or Fill > Content-Aware).
+Clean up any smearing with the Spot Healing Brush and Clone Stamp, sampling
+skin from the forehead and cheek. Then Filter > Noise > Add Noise at about
+2.5%, Gaussian, Monochromatic, masked to that area only, so the healed skin has
+the same texture as the rest of the face and does not look plastic.
+Keep a hidden copy of the untouched mouth as its own layer named
+"Original mouth - BEFORE (toggle me)" so the edit can be switched on and off.
+
+=== STEP 3 - GRADE ===
+Curves adjustment layer, control points (input -> output):
+  0->0, 60->10, 110->26, 145->58, 175->142, 205->196, 230->242, 255->255
+This crushes the grey backdrop to near-black while holding the face highlights.
+
+Gradient Map adjustment layer, stops:
+  0% #06080E   30% #1A2230   58% #6C767E   82% #CDD2CE   100% #F4F6F2
+
+Large soft radial vignette centred around (1275, 2120), darkening the edges by
+about 75%.
+
+Bottom scrim: a new layer with a linear gradient, transparent at y=2680 down to
+#06080E at 86% opacity at y=3300, so the footer type stays readable.
+
+=== STEP 4 - THE AUTOCOMPLETE BAR ===
+Rounded rectangle, x 760 to 1790, y 2200 to 2370, corner radius 20, fill
+#E2E6E0 at 97% opacity. This sits exactly where the mouth was.
+
+Divide it into three equal cells (each 343.33 px wide). Two dividers 2 px wide,
+#969D96, running from y=2242 to y=2328.
+
+Highlight the MIDDLE cell: rounded rectangle inset 10 px horizontally and 12 px
+vertically from that cell, corner radius 12, filled acid green #B8FF3C.
+
+Words, Manrope-Medium 70 px (16.8 pt), colour #101318, centred in each cell,
+vertically centred on y=2285:
+     I'm        fine        thanks
+
+Add a soft drop shadow under the whole bar.
+
+=== STEP 5 - THE NEW SKILL: DISPLACEMENT MAP ===
+This is the technique I have to show I learned independently.
+Duplicate the portrait layer, Image > Adjustments > Desaturate, then
+Filter > Blur > Gaussian Blur at about 30 px. Save that as its own .psd
+(e.g. facemap.psd), then hide/delete the duplicate.
+Select the whole autocomplete bar group, convert it to a Smart Object, then
+Filter > Distort > Displace with Horizontal Scale 20, Vertical Scale 11,
+Stretch To Fit, Repeat Edge Pixels, and choose facemap.psd.
+The bar should then bend over the cheeks and jaw instead of sitting flat.
+Also add a soft shading layer over the bar set to Multiply so it picks up the
+same light as the face.
+
+=== STEP 6 - TYPE (all must be REAL, EDITABLE type layers) ===
+MASTHEAD   "PROMPT"
+           Manrope-ExtraBold, 520 px (124.8 pt), tracking +6, centred on
+           x=1275, baseline y=574, colour #F4F6F2
+
+SELLING LINE  "FOR PEOPLE WHO STILL FINISH THEIR OWN THOUGHTS"
+           Manrope-Medium, 36 px (8.6 pt), tracking +14, centred on x=1275,
+           baseline y=152, colour #C6CDC6
+
+RULE       Acid green bar, 2059 x 4 px, top-left at (246, 600)
+
+COVER LINE 1  left aligned at x=110
+           Kicker "ESSAY" - Manrope-ExtraBold 30 px, tracking +8, acid green,
+           baseline y=950
+           Headline - Roboto-Black 54 px, #EEF1ED, baselines y=1020, 1082, 1144
+              THE DEATH
+              OF THE
+              FIRST DRAFT
+
+COVER LINE 2  left aligned at x=110
+           Kicker "REPORT", baseline y=1420
+           Headline baselines y=1490, 1552, 1614
+              INSIDE THE
+              PREDICTION
+              ENGINE
+
+COVER LINE 3  RIGHT aligned to x=2440
+           Kicker "PLUS", baseline y=980
+           Headline baselines y=1050, 1112, 1174
+              37 PHRASES
+              YOU'LL NEVER
+              CHOOSE AGAIN
+
+MAIN COVER LINE  left aligned at x=110, Roboto-Black 175 px (42 pt), tracking -2
+           "FINISH MY"   baseline y=2960, colour #F4F6F2
+           "SENTENCE."   baseline y=3145, colour #B8FF3C
+
+DATELINE   left aligned at x=110, Manrope-Medium 30 px, tracking +8, #CED5CE,
+           baseline y=3232
+           "SEPTEMBER 18, 2026  ·  VOL 01 / ISSUE 09  ·  RAYYAN ALI"
+
+BARCODE    White block from (2150, 3060) to (2440, 3232) with black vertical
+           bars and the number 9 771234 567890 underneath.
+
+=== STEP 7 - ORGANISE AND SAVE ===
+Group the layers exactly like this, bottom to top:
+  00 BACKGROUND      Base fill
+  01 PORTRAIT        Original mouth - BEFORE (hidden) / Portrait
+  02 GRADE           Curves / Gradient Map / Vignette / Bottom scrim
+  03 AUTOCOMPLETE BAR  Shadow / Plate / Dividers / Selected cell / Words
+  04 MASTHEAD        PROMPT / Selling line / Rule
+  05 COVER LINES     3 cover lines / Main cover line / Dateline
+  06 FOOTER          Barcode
+
+Save as PROMPT_cover.psd (keep all layers) and export PROMPT_cover.jpg at
+300 ppi, maximum quality.
+
+=== ALSO PLEASE ===
+1. Export a JPG after each major step so I have daily process work to submit.
+2. Write me a plain-English step-by-step guide for rebuilding this by hand in
+   Photoshop, at Grade 11 level, explaining what every tool does and why.
+3. If any step cannot be scripted reliably, say so and give me clear manual
+   instructions for that step instead of silently skipping it.
