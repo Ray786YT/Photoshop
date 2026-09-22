@@ -51,7 +51,7 @@ BX0, BX1, BY0, BY1 = 760, 1790, 2200, 2370
 WORDS = ["I'm", 'fine', 'thanks']
 CELL = (BX1 - BX0) / 3.0
 
-def bar_layers(lum):
+def bar_layers(lum, warp=True):
     cy = (BY0 + BY1) // 2
 
     shadow = blank()
@@ -87,9 +87,10 @@ def bar_layers(lum):
                        ('Cell dividers', divs, True),
                        ('Suggestion - selected', sel, True),
                        ('Suggested words', words, True)):
-        im = displace(im, lum)
-        if sh:
-            im = shade(im, lum)
+        if warp:
+            im = displace(im, lum)
+            if sh:
+                im = shade(im, lum)
         out.append(L(nm, im))
     return out
 

@@ -55,3 +55,19 @@ if __name__ == '__main__':
                            interpolation=cv2.INTER_AREA))
     print('landmarks: headtop',py(130),'eyes',py(742),'mouth',py(1150),
           'chin',py(1340),'shoulder',py(1500),'facecx',px(815))
+
+
+def place_rgb(src_path=ORIGINAL):
+    """The source photo on the cover canvas, same transform, no grading."""
+    src = cv2.imread(src_path)
+    sh, sw = src.shape[:2]
+    big = cv2.resize(src, (int(sw*SCALE), int(sh*SCALE)), interpolation=cv2.INTER_LANCZOS4)
+    canvas = np.zeros((H, W, 3), np.uint8)
+    canvas[:] = np.median(big[:20, :20], axis=(0,1)).astype(np.uint8)
+    sx0, sy0 = max(0,-OX), max(0,-OY)
+    dx0, dy0 = max(0,OX), max(0,OY)
+    cw = min(big.shape[1]-sx0, W-dx0)
+    ch = min(big.shape[0]-sy0, H-dy0)
+    canvas[dy0:dy0+ch, dx0:dx0+cw] = big[sy0:sy0+ch, sx0:sx0+cw]
+    if dy0 > 0: canvas[:dy0] = canvas[dy0:dy0+1]
+    return cv2.cvtColor(canvas, cv2.COLOR_BGR2RGB)

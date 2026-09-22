@@ -1,4 +1,4 @@
-"""Generate the filled-in Magazine Cover Planning Sheet as an editable .docx."""
+"""Planning sheet in plain, first-person language, matching the student's steps."""
 from docx import Document
 from docx.shared import Pt, Inches, RGBColor
 from docx.enum.text import WD_ALIGN_PARAGRAPH
@@ -10,130 +10,99 @@ doc = Document()
 for s in doc.sections:
     s.top_margin = s.bottom_margin = Inches(0.8)
     s.left_margin = s.right_margin = Inches(0.9)
+doc.styles['Normal'].font.name = 'Calibri'
+doc.styles['Normal'].font.size = Pt(11)
+doc.styles['Normal'].paragraph_format.space_after = Pt(8)
 
-st = doc.styles['Normal']
-st.font.name = 'Calibri'
-st.font.size = Pt(11)
-st.paragraph_format.space_after = Pt(8)
-
-def head(text, size=16):
+def head(t, size=16):
     p = doc.add_paragraph(); p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    r = p.add_run(text); r.bold = True; r.font.size = Pt(size)
-    return p
-
-def q(text):
+    r = p.add_run(t); r.bold = True; r.font.size = Pt(size)
+def q(t):
     p = doc.add_paragraph(); p.paragraph_format.space_before = Pt(14)
-    r = p.add_run(text); r.bold = True; r.font.size = Pt(11.5)
-    r.font.color.rgb = ACCENT
-    return p
-
-def a(text, bullet=False):
-    p = doc.add_paragraph(style='List Bullet' if bullet else None)
-    p.add_run(text)
-    if not bullet:
-        p.paragraph_format.left_indent = Inches(0.25)
-    return p
+    r = p.add_run(t); r.bold = True; r.font.color.rgb = ACCENT
+def a(t, bullet=False):
+    p = doc.add_paragraph(style='List Bullet' if bullet else None); p.add_run(t)
+    if not bullet: p.paragraph_format.left_indent = Inches(0.25)
 
 head('MAGAZINE COVER PLANNING SHEET')
 p = doc.add_paragraph(); p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-r = p.add_run(f'Student Name: {NAME}'); r.bold = True
+p.add_run(f'Student Name: {NAME}').bold = True
 
 q('1. What type of magazine cover are you creating?')
-a('Technology / AI. PROMPT is a serious ideas-and-current-affairs magazine about '
-  'technology and what it is doing to people — closer to WIRED or TIME than to a '
-  'gadget review magazine.')
+a('Technology / AI. My magazine is about how technology is changing the way people '
+  'live and talk to each other.')
 
 q('2. What is the name of your magazine?')
-a('PROMPT — the word means both a cue that helps a person speak, and the instruction '
-  'you type into an AI. The whole cover lives inside that double meaning.')
+a('PROMPT. A prompt is what you type into an AI, but it also means helping someone '
+  'start talking. I liked that it has both meanings.')
 
-q('3. In one sentence, what is the main message of your magazine cover '
-  '(what is the main cover line)?')
-a('Main cover line: "FINISH MY SENTENCE." — we are handing our own voice over to '
-  'machines that predict what we were about to say.')
+q('3. In one sentence, what is the main message of your magazine cover (what is the '
+  'main cover line)?')
+a('"FINISH MY SENTENCE." - we are letting AI finish our sentences for us, so we are '
+  'losing our own voice.')
 
 q('4a. What is your central image going to look like?')
-a('A black-and-white studio portrait, head and shoulders, looking straight down the '
-  'lens on a plain backdrop. The mouth has been digitally removed — smooth skin where '
-  'it should be. Wrapped across the lower face, exactly where the mouth was, is the '
-  'predictive-text suggestion bar from a phone keyboard, reading "I\'m | fine | thanks", '
-  'with the middle word already highlighted as though the machine has chosen for her.')
+a('A black and white photo of a woman looking straight at the camera. Her mouth is '
+  'removed so there is just skin there. Where her mouth used to be, I will put the '
+  'word suggestion bar from a phone keyboard. It will say "I\'m | fine | thanks", '
+  'with "fine" highlighted in green like the phone already picked it for her.')
 
 q('4b. How are you going to manipulate the image? Be detailed.')
-a('Remove the mouth using the Spot Healing Brush and Clone Stamp, sampling clean skin '
-  'from the forehead and cheek.', True)
-a('Rebuild believable skin texture over the healed patch by adding fine grain, so the '
-  'area does not look plastic or blurred.', True)
-a('Curves adjustment layer to crush the grey backdrop to near-black while holding the '
-  'highlights on the face.', True)
-a('Gradient Map adjustment layer for a cold blue-steel duotone (colourisation).', True)
-a('Radial vignette to pull the eye to the centre of the face.', True)
-a('Build the suggestion bar from rounded-rectangle shape layers and live type.', True)
-a('NEW SKILL: Filter > Distort > Displace, using a blurred greyscale copy of the face '
-  'saved as its own .psd as the displacement map, so the bar bends over the cheeks and '
-  'jaw instead of sitting flat on top like a sticker.', True)
-a('Multiply-blended shading layer so the bar picks up the same light as the face, plus '
-  'a soft drop shadow underneath so it sits on the skin.', True)
-a('Linear gradient scrim across the foot of the cover so the bottom type stays readable '
-  'over the lit neck.', True)
+a('Remove the mouth: select it with the Lasso tool, use Content-Aware Fill, then clean '
+  'it up with the Spot Healing Brush and Clone Stamp.', True)
+a('Make the grey background almost black with a Curves adjustment layer.', True)
+a('Turn the photo dark blue with a Gradient Map adjustment layer.', True)
+a('Make the suggestion bar with the Rounded Rectangle tool and the Type tool, and give '
+  'it a drop shadow.', True)
+a('New skill: use the Displace filter so the bar bends around her face and looks like '
+  'it is on her skin. I will learn this from a YouTube tutorial.', True)
+a('Use downloaded fonts: Manrope and Roboto from Google Fonts.', True)
 
 q('4c. How is this manipulation enhancing or helping you convey the message?')
-a('Deleting the mouth makes the idea literal instead of symbolic — you cannot argue '
-  'with a face that has no mouth. Putting the keyboard suggestion bar exactly where the '
-  'mouth used to be says the machine is doing the talking now. The words matter: '
-  '"I\'m fine thanks" is the most auto-completed and least honest sentence in English, '
-  'and highlighting the middle word shows the choice has already been made for her. '
-  'The cold blue duotone keeps the whole thing clinical and unfriendly, and the single '
-  'acid-green accent is the only machine-made colour on the page — it appears on the '
-  'bar, the kickers, the rule and the cover line, which walks the reader\'s eye from the '
-  'masthead down through the face to "SENTENCE."')
+a('Taking away her mouth shows she can\'t speak for herself anymore. Putting the '
+  'keyboard bar where her mouth should be shows the phone is talking for her. I chose '
+  '"I\'m fine thanks" because people say it automatically even when it isn\'t true. '
+  'The dark blue makes it feel cold and robotic. The green is the only bright colour, '
+  'so your eye goes to the bar first and then down to "SENTENCE."')
 
 q('5. Did Ms. Bensusan discuss your idea with you and give you feedback?')
-a('[ YOUR ANSWER HERE — show her the concept before you submit, then write down what '
-  'she said and anything you changed because of it. ]')
+a('[ Write what Ms. Bensusan said here, and anything you changed because of it. ]')
 
 doc.add_page_break()
-head('DESIGN ELEMENTS AND PRINCIPLES USED', 14)
+head('ELEMENTS AND PRINCIPLES OF DESIGN', 14)
 
 q('Elements of Design')
-for t in ['Line — the acid rule under the masthead and the dividers inside the bar.',
-          'Shape — the rounded rectangles of the suggestion bar and the barcode block.',
-          'Value — hard chiaroscuro: a lit face against a near-black ground.',
-          'Colour — cold blue-steel duotone with one acid-green accent.',
-          'Texture — rebuilt skin grain across the healed area and film grain overall.',
-          'Space — deliberate negative space either side of the head holds the cover lines.',
-          'Form — the modelling on the face keeps it three-dimensional under the flat UI bar.']:
+for t in ['Line - the green line under the title, and the lines between the words in the bar.',
+          'Shape - the rounded rectangle bar and the barcode.',
+          'Value - a bright face on a very dark background.',
+          'Colour - dark blue with one bright green.',
+          'Texture - the skin texture on her face.',
+          'Space - empty dark space on each side of her head for the cover lines.',
+          'Form - her face still looks 3D because of the shadows.']:
     a(t, True)
 
 q('Principles of Design')
-for t in ['Balance — a symmetrical, centred portrait deliberately unbalanced by '
-          'asymmetric type down the left.',
-          'Contrast — light face against dark ground; warm acid green against cold blue.',
-          'Emphasis — the suggestion bar is the brightest, most saturated thing on the '
-          'cover, sitting dead centre.',
-          'Movement — the eye travels masthead, down the face, onto the bar, down to the '
-          'main cover line.',
-          'Repetition — acid green recurs four times; every cover line uses the same '
-          'kicker-over-headline structure.',
-          'Unity — two type families only (Manrope and Roboto) and one palette across '
-          'the whole cover.',
-          'Rhythm — the stacked three-line cover-line blocks set a steady beat down the '
-          'left edge.']:
+for t in ['Balance - her face is in the centre, with text on both sides.',
+          'Contrast - bright face against a dark background, and green against blue.',
+          'Emphasis - the green bar in the middle is the first thing you notice.',
+          'Movement - your eye goes from the title, down her face, to the bar, then to '
+          '"FINISH MY SENTENCE."',
+          'Repetition - I used the same green on the small headings, the line, the bar and '
+          '"SENTENCE."',
+          'Unity - I only used two fonts and the same colours everywhere.',
+          'Rhythm - the three small cover lines are all set up the same way.']:
     a(t, True)
 
-q('Technical checklist')
-for t in ['Canvas: 8.5in x 11in at 300 ppi (2550 x 3300 px), RGB colour.',
-          'Downloaded fonts used: Manrope (masthead, selling line, bar) and Roboto '
-          '(cover lines).',
-          'Industry-standard format: masthead, selling line, main cover line, three '
-          'additional cover lines, dateline with name, barcode.',
-          'Layers: 18 layers in 7 named groups, including a hidden "BEFORE" layer that '
-          'can be switched on to show the original mouth.',
-          'Selection tools: Magic Wand / flood-select on the backdrop, lasso around the '
-          'mouth area before healing.',
-          'Editing tools: Clone Stamp, Healing Brush, crop, transform and scale.',
-          'Colourisation tools: Curves and Gradient Map adjustment layers.']:
+q('Checklist')
+for t in ['8.5" x 11" at 300 ppi, in colour.',
+          'Downloaded fonts: Manrope and Roboto.',
+          'Masthead, selling line, main cover line, three more cover lines, dateline with my '
+          'name, and a barcode.',
+          'Layers organised into named folders.',
+          'Selection tool: Lasso. Editing tools: Clone Stamp, Spot Healing Brush, resizing.',
+          'Colour tools: Curves and Gradient Map adjustment layers.',
+          'New skill learned on my own: the Displace filter.']:
     a(t, True)
 
 doc.save('/home/user/Photoshop/out/PROMPT_planning_sheet.docx')
-print('saved planning sheet')
+print('planning sheet saved')

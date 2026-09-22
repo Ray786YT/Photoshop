@@ -10,7 +10,9 @@ lower face, reading *I'm / fine / thanks*.
 |---|---|
 | `PROMPT_cover.psd` | Layered Photoshop file, 2550x3300 @ 300 ppi, 18 layers in 7 groups |
 | `PROMPT_cover.jpg` | Flattened 300 ppi cover |
-| `PROMPT_planning_sheet.docx` | Filled planning sheet (question 5 left blank for teacher feedback) |
+| `PROMPT_planning_sheet.docx` | Planning sheet in plain language (question 5 left blank for teacher feedback) |
+| `PROMPT_STARTER.psd` | Layout done, photo untouched - the student does the manipulation |
+| `PROMPT_FINISH_IT_YOURSELF_guide.docx` | Grade 11 step-by-step for finishing the starter file |
 | `PROMPT_process_sheet.jpg` | All eight build stages on one contact sheet |
 | `process/` | The eight stage JPGs individually |
 
