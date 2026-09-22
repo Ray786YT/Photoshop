@@ -127,7 +127,7 @@ for t in ['Canvas: 8.5in x 11in at 300 ppi (2550 x 3300 px), RGB colour.',
           '(cover lines).',
           'Industry-standard format: masthead, selling line, main cover line, three '
           'additional cover lines, dateline with name, barcode.',
-          'Layers: 17 layers in 6 named groups, including a hidden "BEFORE" layer that '
+          'Layers: 18 layers in 7 named groups, including a hidden "BEFORE" layer that '
           'can be switched on to show the original mouth.',
           'Selection tools: Magic Wand / flood-select on the backdrop, lasso around the '
           'mouth area before healing.',

@@ -85,7 +85,7 @@ def bar_layers(lum):
     for nm, im, sh in (('Bar drop shadow', shadow, False),
                        ('Bar plate', plate, True),
                        ('Cell dividers', divs, True),
-                       ('Suggestion — selected', sel, True),
+                       ('Suggestion - selected', sel, True),
                        ('Suggested words', words, True)):
         im = displace(im, lum)
         if sh:
@@ -104,7 +104,7 @@ def masthead_layers():
 
     rl = blank()
     ImageDraw.Draw(rl).rectangle([246, 600, 2304, 603], fill=ACID + (255,))
-    return [L('Masthead — PROMPT', mh), L('Selling line', sl), L('Rule', rl)]
+    return [L('Masthead - PROMPT', mh), L('Selling line', sl), L('Rule', rl)]
 
 def coverline(x, base, kicker, lines, align='left'):
     img = blank(); d = ImageDraw.Draw(img)
@@ -118,13 +118,13 @@ def coverline(x, base, kicker, lines, align='left'):
 
 def text_layers():
     out = []
-    out.append(L('Cover line — ESSAY',
+    out.append(L('Cover line - ESSAY',
                  coverline(110, 950, 'ESSAY',
                            ['THE DEATH', 'OF THE', 'FIRST DRAFT'])))
-    out.append(L('Cover line — REPORT',
+    out.append(L('Cover line - REPORT',
                  coverline(110, 1420, 'REPORT',
                            ['INSIDE THE', 'PREDICTION', 'ENGINE'])))
-    out.append(L('Cover line — PLUS',
+    out.append(L('Cover line - PLUS',
                  coverline(2440, 980, 'PLUS',
                            ['37 PHRASES', "YOU'LL NEVER", 'CHOOSE AGAIN'], 'right')))
 
@@ -184,9 +184,9 @@ def build_doc():
     bimg = Image.fromarray(before_rgb[by0:by1, bx0:bx1], 'RGB').convert('RGBA')
 
     doc.add(Group('01 PORTRAIT', [
-        Layer('Original mouth — BEFORE (toggle me)', bimg,
+        Layer('Portrait - healed + duotone', portrait),
+        Layer('Original mouth - BEFORE (toggle me)', bimg,
               left=bx0, top=by0, visible=False),
-        Layer('Portrait — healed + duotone', portrait),
     ], open=True))
     doc.add(Group('02 GRADE', [scrim_layer()]))
     doc.add(Group('03 AUTOCOMPLETE BAR', bar_layers(lum)))

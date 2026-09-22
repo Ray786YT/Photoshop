@@ -8,7 +8,7 @@ lower face, reading *I'm / fine / thanks*.
 
 | File | What it is |
 |---|---|
-| `PROMPT_cover.psd` | Layered Photoshop file, 2550x3300 @ 300 ppi, 17 layers in 6 groups |
+| `PROMPT_cover.psd` | Layered Photoshop file, 2550x3300 @ 300 ppi, 18 layers in 7 groups |
 | `PROMPT_cover.jpg` | Flattened 300 ppi cover |
 | `PROMPT_planning_sheet.docx` | Filled planning sheet (question 5 left blank for teacher feedback) |
 | `PROMPT_process_sheet.jpg` | All eight build stages on one contact sheet |
@@ -18,7 +18,7 @@ lower face, reading *I'm / fine / thanks*.
 
 ```
 00 BACKGROUND      Base fill
-01 PORTRAIT        Original mouth - BEFORE (hidden toggle) / Portrait - healed + duotone
+01 PORTRAIT        Portrait - healed + duotone / Original mouth - BEFORE (hidden toggle, sits on top)
 02 GRADE           Bottom scrim
 03 AUTOCOMPLETE    Bar drop shadow / Bar plate / Cell dividers / Suggestion - selected / Suggested words
 04 MASTHEAD        Masthead - PROMPT / Selling line / Rule
