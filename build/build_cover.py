@@ -190,7 +190,7 @@ def build_doc():
               left=bx0, top=by0, visible=False),
     ], open=True))
     doc.add(Group('02 GRADE', [scrim_layer()]))
-    doc.add(Group('03 AUTOCOMPLETE BAR', bar_layers(lum)))
+    doc.add(Group('03 AUTOCOMPLETE BAR', bar_layers(lum, warp=False)))
     doc.add(Group('04 MASTHEAD', masthead_layers()))
     doc.add(Group('05 COVER LINES', text_layers()))
     doc.add(Group('06 FOOTER', [barcode_layer()]))

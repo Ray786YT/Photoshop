@@ -49,13 +49,12 @@ a('A black and white photo of a woman looking straight at the camera. Her mouth 
 
 q('4b. How are you going to manipulate the image? Be detailed.')
 a('Remove the mouth: select it with the Lasso tool, use Content-Aware Fill, then clean '
-  'it up with the Spot Healing Brush and Clone Stamp.', True)
+  'it up with the Spot Healing Brush and Clone Stamp. Content-Aware Fill is my new skill - '
+  'I will learn it from a YouTube tutorial.', True)
 a('Make the grey background almost black with a Curves adjustment layer.', True)
 a('Turn the photo dark blue with a Gradient Map adjustment layer.', True)
 a('Make the suggestion bar with the Rounded Rectangle tool and the Type tool, and give '
   'it a drop shadow.', True)
-a('New skill: use the Displace filter so the bar bends around her face and looks like '
-  'it is on her skin. I will learn this from a YouTube tutorial.', True)
 a('Use downloaded fonts: Manrope and Roboto from Google Fonts.', True)
 
 q('4c. How is this manipulation enhancing or helping you convey the message?')
@@ -101,7 +100,7 @@ for t in ['8.5" x 11" at 300 ppi, in colour.',
           'Layers organised into named folders.',
           'Selection tool: Lasso. Editing tools: Clone Stamp, Spot Healing Brush, resizing.',
           'Colour tools: Curves and Gradient Map adjustment layers.',
-          'New skill learned on my own: the Displace filter.']:
+          'New skill learned on my own: Content-Aware Fill.']:
     a(t, True)
 
 doc.save('/home/user/Photoshop/out/PROMPT_planning_sheet.docx')

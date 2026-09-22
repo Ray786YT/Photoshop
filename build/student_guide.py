@@ -31,12 +31,14 @@ def why(t):
 
 h1('PROMPT Cover - Finish It Yourself')
 para('Open PROMPT_STARTER.psd in Photoshop. The text and layout are already done. '
-     'You do the photo editing - the part your teacher is marking. About 1 to 2 class '
-     'periods. Take a screenshot at every camera step for your process work.')
+     'You do the photo editing - the part your teacher is marking. About 1 class '
+     'period. Take a screenshot at every camera step for your process work.')
 para('Can\'t see the layers? Window > Layers.', italic=True)
 shot('the starter file open, with the Layers panel showing.')
 
-h2('Step 1 - Remove the mouth')
+h2('Step 1 - Remove the mouth (NEW SKILL: Content-Aware Fill)')
+para('This is your "independently learned" skill. Before you start, watch a short '
+     'YouTube video: search "Photoshop content aware fill tutorial".')
 step('Click the eye next to the 03 AUTOCOMPLETE BAR folder to hide it, so you can see the mouth.')
 step('Click the layer "Portrait - original photo". Press Ctrl+J (Mac: Cmd+J) to copy it. '
      'Double-click the copy\'s name and call it "Portrait - no mouth". The one underneath '
@@ -72,26 +74,7 @@ shot('the Gradient Editor open.')
 why('the cold blue feels robotic and techy, and it makes the green bar the only bright '
     'colour, so your eye goes straight to it.')
 
-h2('Step 4 - Bend the bar onto her face (NEW SKILL: Displace filter)')
-para('This is your "independently learned" skill. First watch a short YouTube video: '
-     'search "Photoshop displacement map tutorial". Then:')
-para('Make the map:', italic=True)
-step('Click "Portrait - no mouth". Press Ctrl+J (Cmd+J) to copy it.')
-step('Image > Adjustments > Desaturate. Then Filter > Blur > Gaussian Blur, Radius 30 > OK.')
-step('Right-click that blurry layer > Duplicate Layer. Under Document pick "New" > OK.')
-step('In the new window: File > Save As > name it facemap, format Photoshop (.psd), save it on '
-     'your Desktop. Close that window.')
-step('Back in your cover, delete the blurry layer (drag it to the trash can).')
-para('Use the map:', italic=True)
-step('Turn the eye back on for 03 AUTOCOMPLETE BAR.')
-step('Right-click the 03 AUTOCOMPLETE BAR folder > Convert to Smart Object.')
-step('Filter > Distort > Displace. Horizontal Scale 20, Vertical Scale 11, Stretch To Fit, '
-     'Repeat Edge Pixels > OK. When it asks for a file, pick facemap.psd.')
-shot('the bar before and after Displace.')
-why('the bar now curves with her cheeks and jaw, so it looks like it is on her skin '
-    'instead of pasted on top.')
-
-h2('Step 5 - Save both files')
+h2('Step 4 - Save both files')
 step('Check Image > Image Size says 8.5 x 11 inches at 300 Pixels/Inch.')
 step('File > Save. This keeps all your layers (.psd).')
 step('File > Save a Copy (or Export > Export As) > JPEG, highest quality.')
@@ -102,8 +85,8 @@ bullet('Mouth: "I lassoed it and used Content-Aware Fill, then cleaned it up wit
        'Spot Healing Brush and Clone Stamp."')
 bullet('Dark background: "A Curves adjustment layer."')
 bullet('Blue colour: "A Gradient Map adjustment layer."')
-bullet('Bar bending: "I learned the Displace filter from a YouTube tutorial. You make a '
-       'blurry black-and-white copy of the face and use it as a map to bend the bar."')
+bullet('New skill: "I learned Content-Aware Fill from a YouTube tutorial. You select '
+       'something and Photoshop fills it in using the pixels around it."')
 bullet('Fonts: "Manrope and Roboto, downloaded from Google Fonts."')
 
 h2('Optional extras (only if you want)')

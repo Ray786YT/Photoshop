@@ -32,7 +32,7 @@ Place the portrait, scale it to 2594 x 3220 px, position its top-left corner at
 x = -37, y = 430. This puts the top of the head near y=639, the chin near
 y=2587 and the shoulders near y=2845, with the face centred on x=1275.
 
-=== STEP 2 - REMOVE THE MOUTH (the main manipulation) ===
+=== STEP 2 - REMOVE THE MOUTH (the main manipulation, and my "new skill") ===
 Make an elliptical selection centred at (1286, 2282) with radii 338 x 201,
 feather about 20 px, then Edit > Content-Aware Fill (or Fill > Content-Aware).
 Clean up any smearing with the Spot Healing Brush and Clone Stamp, sampling
@@ -70,21 +70,10 @@ Words, Manrope-Medium 70 px (16.8 pt), colour #101318, centred in each cell,
 vertically centred on y=2285:
      I'm        fine        thanks
 
-Add a soft drop shadow under the whole bar.
+Add a soft drop shadow under the whole bar. Keep the bar flat - do NOT use
+the Displace filter.
 
-=== STEP 5 - THE NEW SKILL: DISPLACEMENT MAP ===
-This is the technique I have to show I learned independently.
-Duplicate the portrait layer, Image > Adjustments > Desaturate, then
-Filter > Blur > Gaussian Blur at about 30 px. Save that as its own .psd
-(e.g. facemap.psd), then hide/delete the duplicate.
-Select the whole autocomplete bar group, convert it to a Smart Object, then
-Filter > Distort > Displace with Horizontal Scale 20, Vertical Scale 11,
-Stretch To Fit, Repeat Edge Pixels, and choose facemap.psd.
-The bar should then bend over the cheeks and jaw instead of sitting flat.
-Also add a soft shading layer over the bar set to Multiply so it picks up the
-same light as the face.
-
-=== STEP 6 - TYPE (all must be REAL, EDITABLE type layers) ===
+=== STEP 5 - TYPE (all must be REAL, EDITABLE type layers) ===
 MASTHEAD   "PROMPT"
            Manrope-ExtraBold, 520 px (124.8 pt), tracking +6, centred on
            x=1275, baseline y=574, colour #F4F6F2
@@ -128,7 +117,7 @@ DATELINE   left aligned at x=110, Manrope-Medium 30 px, tracking +8, #CED5CE,
 BARCODE    White block from (2150, 3060) to (2440, 3232) with black vertical
            bars and the number 9 771234 567890 underneath.
 
-=== STEP 7 - ORGANISE AND SAVE ===
+=== STEP 6 - ORGANISE AND SAVE ===
 Group the layers exactly like this, bottom to top:
   00 BACKGROUND      Base fill
   01 PORTRAIT        Original mouth - BEFORE (hidden) / Portrait
