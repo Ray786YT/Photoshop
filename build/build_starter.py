@@ -22,7 +22,7 @@ def main():
     doc.add(Group('00 BACKGROUND', [Layer('Base fill',
                                           Image.new('RGBA', (W, H), (8, 10, 16, 255)))]))
     doc.add(Group('01 PORTRAIT', [Layer('Portrait - original photo', rgba)]))
-    doc.add(Group('02 GRADE', [bc.scrim_layer()]))
+    doc.add(Group('02 BOTTOM FADE', [bc.scrim_layer()]))
     doc.add(Group('03 AUTOCOMPLETE BAR', bc.bar_layers(lum, warp=False)))
     doc.add(Group('04 MASTHEAD', bc.masthead_layers()))
     doc.add(Group('05 COVER LINES', bc.text_layers()))

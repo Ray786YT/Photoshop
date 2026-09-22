@@ -52,7 +52,9 @@ a('Remove the mouth: select it with the Lasso tool, use Content-Aware Fill, then
   'it up with the Spot Healing Brush and Clone Stamp. Content-Aware Fill is my new skill - '
   'I will learn it from a YouTube tutorial.', True)
 a('Make the grey background almost black with a Curves adjustment layer.', True)
+a('Darken the edges with a black Vignette layer (a big soft Eraser in the middle).', True)
 a('Turn the photo dark blue with a Gradient Map adjustment layer.', True)
+a('Use the Gradient tool to fade the bottom to black so the bottom text is easy to read.', True)
 a('Make the suggestion bar with the Rounded Rectangle tool and the Type tool, and give '
   'it a drop shadow.', True)
 a('Use downloaded fonts: Manrope and Roboto from Google Fonts.', True)

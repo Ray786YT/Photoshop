@@ -68,8 +68,9 @@ step('Layer > New Adjustment Layer > Gradient Map > OK.')
 step('In Properties, click the gradient bar to open the Gradient Editor.')
 step('Click the LEFT colour stop under the bar, set it to #06080E (very dark blue).')
 step('Click the RIGHT colour stop, set it to #F4F6F2 (off-white).')
-step('Click just under the middle of the bar to add a new stop. Set its Location to 58% '
-     'and its colour to #6C767E (blue-grey). Click OK.')
+step('Click just under the bar to add three more stops. For each one, type its Location '
+     'and pick its colour: 30% #1A2230 (dark navy), 58% #6C767E (blue-grey), '
+     '82% #CDD2CE (light grey). Click OK.')
 shot('the Gradient Editor open.')
 why('the cold blue feels robotic and techy, and it makes the green bar the only bright '
     'colour, so your eye goes straight to it.')

@@ -33,9 +33,9 @@ save(place(grade.ORIGINAL), '01_source_photo')
 save(place(grade.HEALED),  '02_mouth_removed')
 
 # stage 3+: rebuild the document and reveal one group at a time
-doc = build_cover.build_doc()
+_, doc = build_cover.build_doc()          # preview stack: grade already applied
 groups = [n for n in doc.nodes if isinstance(n, Group)]
-order = ['03_duotone_grade', '04_bottom_scrim', '05_autocomplete_bar',
+order = ['03_curves_and_gradient_map', '04_bottom_fade', '05_autocomplete_bar',
          '06_masthead', '07_cover_lines', '08_final']
 for g in groups:
     g.visible = False

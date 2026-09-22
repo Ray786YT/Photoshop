@@ -38,7 +38,7 @@ sheet = Image.new('RGB', (Wd, Ht), (16, 18, 24))
 d = ImageDraw.Draw(sheet)
 d.text((PAD, PAD), 'PROMPT_cover.psd — every layer, isolated',
        font=font('Manrope-ExtraBold.ttf', 40), fill=(238, 241, 237))
-d.text((PAD, PAD+54), f'{len(items)} layers in 6 groups · read straight out of the .psd file',
+d.text((PAD, PAD+54), f'{len(items)} layers in 7 folders · read straight out of the .psd file',
        font=font('Manrope-Medium.ttf', 24), fill=(150, 200, 90))
 
 fl = font('Manrope-Medium.ttf', 19)
@@ -48,7 +48,16 @@ for i, (name, layer) in enumerate(items):
     y = PAD + 110 + r*(TH+CAP+GAP)
 
     cell = checker((TW, TH))
-    pil = layer.topil()
+    pil = None if layer.kind in ('curves', 'gradientmap') else layer.topil()
+    if layer.kind in ('curves', 'gradientmap'):
+        cd = ImageDraw.Draw(cell)
+        cd.rectangle([0, 0, TW, TH], fill=(34, 38, 46))
+        cd.text((TW // 2, TH // 2 - 22), 'ADJUSTMENT LAYER', font=font('Manrope-ExtraBold.ttf', 26),
+                fill=(184, 255, 60), anchor='mm')
+        cd.text((TW // 2, TH // 2 + 18), 'changes the colour of the', font=font('Manrope-Medium.ttf', 20),
+                fill=(200, 206, 200), anchor='mm')
+        cd.text((TW // 2, TH // 2 + 44), 'layers underneath it', font=font('Manrope-Medium.ttf', 20),
+                fill=(200, 206, 200), anchor='mm')
     if pil is not None:
         full = Image.new('RGBA', (W, H), (0, 0, 0, 0))
         full.paste(pil.convert('RGBA'), (layer.offset[0], layer.offset[1]))

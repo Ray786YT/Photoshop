@@ -120,8 +120,8 @@ BARCODE    White block from (2150, 3060) to (2440, 3232) with black vertical
 === STEP 6 - ORGANISE AND SAVE ===
 Group the layers exactly like this, bottom to top:
   00 BACKGROUND      Base fill
-  01 PORTRAIT        Original mouth - BEFORE (hidden) / Portrait
-  02 GRADE           Curves / Gradient Map / Vignette / Bottom scrim
+  01 PORTRAIT        Portrait / Mouth removed / Curves 1 / Vignette / Gradient Map 1
+  02 BOTTOM FADE     Bottom fade
   03 AUTOCOMPLETE BAR  Shadow / Plate / Dividers / Selected cell / Words
   04 MASTHEAD        PROMPT / Selling line / Rule
   05 COVER LINES     3 cover lines / Main cover line / Dateline

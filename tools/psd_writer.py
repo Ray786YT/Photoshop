@@ -105,6 +105,7 @@ BLEND_MODES = {
     'exclusion': b'smud', 'subtract': b'fsub', 'divide': b'fdiv',
     'hue': b'hue ', 'saturation': b'sat ', 'color': b'colr',
     'luminosity': b'lum ',
+    'pass_through': b'pass',
 }
 
 
@@ -112,7 +113,8 @@ class Layer:
     """A raster layer. `image` is an RGBA PIL image placed at (left, top)."""
 
     def __init__(self, name, image=None, left=0, top=0, opacity=255,
-                 blend='normal', visible=True, divider=None, clipping=0):
+                 blend='normal', visible=True, divider=None, clipping=0,
+                 section_blend=None, adjustment=None):
         self.name = name
         self.image = image
         self.left = left
@@ -122,6 +124,11 @@ class Layer:
         self.visible = visible
         self.divider = divider      # None | 1 open folder | 2 closed | 3 divider
         self.clipping = clipping    # 1 = clip to layer below
+        # blend mode stored in the folder's 'lsct' block; Photoshop keeps the
+        # record at 'norm' and writes 'pass' here for Pass Through folders
+        self.section_blend = section_blend or blend
+        # (key, payload) for an adjustment layer, e.g. (b'curv', bytes)
+        self.adjustment = adjustment
 
     # -- record + channel data ------------------------------------------------
 
@@ -142,6 +149,8 @@ class Layer:
         return (top, left, top + h, left + w), planes
 
     def build(self):
+        if self.adjustment is not None:
+            return self._build_adjustment()
         (top, left, bottom, right), planes = self._bbox_and_planes()
         width, height = right - left, bottom - top
 
@@ -171,16 +180,42 @@ class Layer:
         extra += _addl(b'luni', _unicode_str(self.name))
         if self.divider is not None:
             extra += _addl(b'lsct', _u32(self.divider) + b'8BIM' +
-                           BLEND_MODES.get(self.blend, b'norm'))
+                           BLEND_MODES.get(self.section_blend, b'norm'))
         rec += _u32(len(extra)) + extra
 
+        return rec, b''.join(d for _, d in channels)
+
+    def _build_adjustment(self):
+        """Adjustment layer, laid out the way Photoshop writes one: no pixels,
+        empty RGBA channels, an empty white (reveal-all) user mask, flags 0x18,
+        and the adjustment block ahead of the unicode name."""
+        key, payload = self.adjustment
+        channels = [(cid, _u16(0)) for cid in (-1, 0, 1, 2, -2)]
+
+        rec = _i32(0) * 4
+        rec += _u16(len(channels))
+        for cid, data in channels:
+            rec += _i16(cid) + _u32(len(data))
+        rec += b'8BIM' + BLEND_MODES.get(self.blend, b'norm')
+        rec += _u8(self.opacity)
+        rec += _u8(self.clipping)
+        rec += _u8(0x18 | (0 if self.visible else 2))
+        rec += _u8(0)
+
+        mask = _i32(0) * 4 + _u8(255) + _u8(0) + b'\x00\x00'
+        extra = _u32(len(mask)) + mask
+        extra += _u32(0)                       # no blending ranges
+        extra += _pascal(self.name)
+        extra += _addl(key, payload, pad=4)
+        extra += _addl(b'luni', _unicode_str(self.name))
+        rec += _u32(len(extra)) + extra
         return rec, b''.join(d for _, d in channels)
 
 
 class Group:
     """A layer group. `children` are drawn bottom-of-list = bottom of stack."""
 
-    def __init__(self, name, children=None, opacity=255, blend='normal',
+    def __init__(self, name, children=None, opacity=255, blend='pass_through',
                  visible=True, open=True):
         self.name = name
         self.children = children or []
@@ -198,8 +233,11 @@ def _flatten(nodes):
             # bottom: section divider, then children, then the folder header
             out.append(Layer('</Layer group>', divider=3, visible=True))
             out.extend(_flatten(node.children))
+            passthru = node.blend == 'pass_through'
             out.append(Layer(node.name, divider=1 if node.open else 2,
-                             opacity=node.opacity, blend=node.blend,
+                             opacity=node.opacity,
+                             blend='normal' if passthru else node.blend,
+                             section_blend=node.blend,
                              visible=node.visible))
         else:
             out.append(node)

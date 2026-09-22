@@ -8,7 +8,7 @@ lower face, reading *I'm / fine / thanks*.
 
 | File | What it is |
 |---|---|
-| `PROMPT_cover.psd` | Layered Photoshop file, 2550x3300 @ 300 ppi, 18 layers in 7 groups |
+| `PROMPT_cover.psd` | Layered Photoshop file, 2550x3300 @ 300 ppi, 21 layers in 7 folders, including real Curves and Gradient Map adjustment layers |
 | `PROMPT_cover.jpg` | Flattened 300 ppi cover |
 | `PROMPT_planning_sheet.docx` | Planning sheet in plain language (question 5 left blank for teacher feedback) |
 | `PROMPT_STARTER.psd` | Layout done, photo untouched - the student does the manipulation |
@@ -20,8 +20,9 @@ lower face, reading *I'm / fine / thanks*.
 
 ```
 00 BACKGROUND      Base fill
-01 PORTRAIT        Portrait - healed + duotone / Original mouth - BEFORE (hidden toggle, sits on top)
-02 GRADE           Bottom scrim
+01 PORTRAIT        Portrait - original photo / Mouth removed (Content-Aware Fill) /
+                   Curves 1 (adjustment layer) / Vignette / Gradient Map 1 (adjustment layer)
+02 BOTTOM FADE     Bottom fade
 03 AUTOCOMPLETE    Bar drop shadow / Bar plate / Cell dividers / Suggestion - selected / Suggested words
 04 MASTHEAD        Masthead - PROMPT / Selling line / Rule
 05 COVER LINES     Three additional cover lines / Main cover line / Dateline

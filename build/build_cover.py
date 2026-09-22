@@ -149,7 +149,7 @@ def scrim_layer():
     ys = ys * ys * (3 - 2 * ys)
     ramp[..., 3] = (ys * 255 * strength).astype(np.uint8)[:, None]
     ramp[..., :3] = np.array([6, 8, 14], np.uint8)
-    return L('Bottom scrim', Image.fromarray(ramp, 'RGBA'))
+    return L('Bottom fade', Image.fromarray(ramp, 'RGBA'))
 
 def barcode_layer():
     img = blank(); d = ImageDraw.Draw(img)
@@ -169,41 +169,89 @@ def barcode_layer():
 
 # --------------------------------------------------------------------- main
 
-def build_doc():
-    rgb, lum = grade.build()
-    portrait = Image.fromarray(np.dstack([rgb, np.full((H, W), 255, np.uint8)]), 'RGBA')
+def curves_block(points):
+    """'curv' payload exactly as Photoshop writes it: a legacy v1 section plus
+    the v4 'Crv ' extra section, one composite (RGB) curve, points stored as
+    (output, input)."""
+    from psd_tools.psd.adjustments import Curves, CurvesExtraMarker, CurvesExtraItem
+    pts = [(out, inp) for inp, out in points]
+    return Curves(is_map=False, version=1, count_map=1, data=[pts],
+                  extra=CurvesExtraMarker(version=4, items=[CurvesExtraItem(0, pts)])
+                  ).tobytes()
 
-    doc = PSD(W, H, 300.0)
+def gradient_map_block(stops, name='Custom'):
+    """'grdm' payload matching Photoshop's own Gradient Map layers: 16-bit RGB
+    colour stops at 0-4096, midpoints 50, fully opaque, Smoothness 100%."""
+    from psd_tools.psd.adjustments import GradientMap, ColorStop, TransparencyStop
+    cs = [ColorStop(int(round(t * 4096)), 50, 0,
+                    (c[0] * 257, c[1] * 257, c[2] * 257, 0)) for t, c in stops]
+    ts = [TransparencyStop(0, 50, 255), TransparencyStop(4096, 50, 255)]
+    return GradientMap(version=1, is_reversed=0, is_dithered=0, name=name + '\x00',
+                       method=b'Gcls', color_stops=cs, transparency_stops=ts,
+                       expansion=2, interpolation=4096, length=32, mode=0,
+                       random_seed=691687736, show_transparency=0,
+                       use_vector_color=1, roughness=2048, color_model=3,
+                       minimum_color=[0, 0, 0, 0],
+                       maximum_color=[32768, 32768, 32768, 32768]).tobytes()
+
+def _rgba(rgb):
+    return Image.fromarray(np.dstack([rgb, np.full(rgb.shape[:2], 255, np.uint8)]), 'RGBA')
+
+def build_doc():
+    """Returns (doc, preview).
+
+    doc is what gets saved: the untouched photo, a separate Content-Aware
+    Fill patch, then real Curves and Gradient Map adjustment layers with a
+    vignette layer between them. preview is the same stack with that grade
+    already applied, used for the flat composite and the .jpg.
+    """
+    graded, lum = grade.build_ps()
+    original = grade.place_rgb(grade.ORIGINAL)
+    healed = grade.place_rgb(grade.HEALED)
+
+    # the mouth edit as its own layer: only the pixels the heal changed
+    diff = np.abs(original.astype(np.int16) - healed.astype(np.int16)).max(axis=2)
+    ys, xs = np.nonzero(diff)
+    bx0, by0, bx1, by1 = int(xs.min()), int(ys.min()), int(xs.max()) + 1, int(ys.max()) + 1
+    patch = _rgba(healed[by0:by1, bx0:bx1])
+
+    v = grade.vignette_map()
+    vig = np.zeros((H, W, 4), np.uint8)
+    vig[..., 3] = np.clip(np.round((1.0 - v) * 255), 0, 255).astype(np.uint8)
+    vignette = Image.fromarray(vig, 'RGBA')
 
     base = Image.new('RGBA', (W, H), (8, 10, 16, 255))
+    rest = [Group('02 BOTTOM FADE', [scrim_layer()]),
+            Group('03 AUTOCOMPLETE BAR', bar_layers(lum, warp=False)),
+            Group('04 MASTHEAD', masthead_layers()),
+            Group('05 COVER LINES', text_layers()),
+            Group('06 FOOTER', [barcode_layer()])]
+
+    doc = PSD(W, H, 300.0)
     doc.add(Group('00 BACKGROUND', [Layer('Base fill', base)]))
-
-    # hidden 'before' patch: graded original, cropped to the mouth zone, so the
-    # edit can be toggled on and off to show the manipulation
-    before_rgb, _ = grade.build(grade.ORIGINAL)
-    bx0, by0, bx1, by1 = 860, 2020, 1700, 2540
-    bimg = Image.fromarray(before_rgb[by0:by1, bx0:bx1], 'RGB').convert('RGBA')
-
     doc.add(Group('01 PORTRAIT', [
-        Layer('Portrait - healed + duotone', portrait),
-        Layer('Original mouth - BEFORE (toggle me)', bimg,
-              left=bx0, top=by0, visible=False),
-    ], open=True))
-    doc.add(Group('02 GRADE', [scrim_layer()]))
-    doc.add(Group('03 AUTOCOMPLETE BAR', bar_layers(lum, warp=False)))
-    doc.add(Group('04 MASTHEAD', masthead_layers()))
-    doc.add(Group('05 COVER LINES', text_layers()))
-    doc.add(Group('06 FOOTER', [barcode_layer()]))
+        Layer('Portrait - original photo', _rgba(original)),
+        Layer('Mouth removed (Content-Aware Fill)', patch, left=bx0, top=by0),
+        Layer('Curves 1', adjustment=(b'curv', curves_block(grade.CURVE_PS))),
+        L('Vignette', vignette),
+        Layer('Gradient Map 1', adjustment=(b'grdm', gradient_map_block(grade.GRADIENT_MAP))),
+    ]))
+    for g in rest:
+        doc.add(g)
 
-    return doc
+    preview = PSD(W, H, 300.0)
+    preview.add(Group('00 BACKGROUND', [Layer('Base fill', base)]))
+    preview.add(Group('01 PORTRAIT', [Layer('Portrait - graded', _rgba(graded))]))
+    for g in rest:
+        preview.add(g)
+    return doc, preview
 
 def main():
-    doc = build_doc()
-    flat = doc.render()
+    doc, preview = build_doc()
+    flat = preview.render()
     doc.save('/home/user/Photoshop/out/PROMPT_cover.psd', composite=flat)
     flat.save('/home/user/Photoshop/out/PROMPT_cover.jpg', quality=95,
               dpi=(300, 300), subsampling=0)
-    flat.resize((640, 828), Image.LANCZOS).save('/tmp/wk/cover_prev.png')
     print('done')
 
 if __name__ == '__main__':
