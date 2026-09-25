@@ -72,27 +72,65 @@ a('[ Write what Ms. Bensusan said here, and anything you changed because of it. 
 doc.add_page_break()
 head('ELEMENTS AND PRINCIPLES OF DESIGN', 14)
 
+para_note = doc.add_paragraph()
+para_note.add_run('For each one: where it is on my cover, how I used it, and why.').italic = True
+
+def ep(title, text):
+    p = doc.add_paragraph(style='List Bullet')
+    p.add_run(title + ' - ').bold = True
+    p.add_run(text)
+
 q('Elements of Design')
-for t in ['Line - the green line under the title, and the lines between the words in the bar.',
-          'Shape - the rounded rectangle bar and the barcode.',
-          'Value - a bright face on a very dark background.',
-          'Colour - dark blue with one bright green.',
-          'Texture - the skin texture on her face.',
-          'Space - empty dark space on each side of her head for the cover lines.',
-          'Form - her face still looks 3D because of the shadows.']:
-    a(t, True)
+ep('Line', 'I put a thin green line right under the PROMPT title to separate the title from '
+   'the photo. There are also two thin grey lines inside the keyboard bar that split it into '
+   'three boxes, the same as a real phone keyboard, so people recognise it straight away.')
+ep('Shape', 'The suggestion bar is a long rounded rectangle, the same shape as the one on a '
+   'phone, so it looks like real technology. It goes straight across her face where her mouth '
+   'should be, so its flat, straight shape cuts across the round shape of her face and stands out.')
+ep('Value', 'I used a Curves adjustment layer to make the background almost black while keeping '
+   'her face bright. The big difference between light and dark makes her face the brightest '
+   'thing on the page, so it is the first thing you look at. The dark background also makes the '
+   'white text easy to read. I also darkened the edges with a Vignette layer so the light '
+   'stays in the middle.')
+ep('Colour', 'Most of the cover is dark blue from the Gradient Map, which feels cold and '
+   'robotic, like technology. The only bright colour is green, and I only used it on the '
+   'important parts: the selected word "fine", the small headings, the line under the title, '
+   'and "SENTENCE." Because it is the only bright colour, the green shows you where to look.')
+ep('Texture', 'I kept the real skin texture on her face, like the pores and small lines, so she '
+   'looks like a real person and not a drawing. When I removed her mouth, I cleaned it up with '
+   'the Spot Healing Brush so the skin texture there matches the rest of her face. If that spot '
+   'was smooth and blurry, the edit would look fake.')
+ep('Space', 'I left empty dark space on both sides of her head and put my three smaller cover '
+   'lines there, so the text never covers her face. The empty space also makes the cover feel '
+   'quiet and a bit lonely, which fits the idea of someone who has lost their voice.')
+ep('Form', 'The shadows on her nose, cheeks and jaw make her face look 3D and real. The keyboard '
+   'bar is completely flat, so it looks like something stuck onto her, which shows that the '
+   'technology does not belong there.')
 
 q('Principles of Design')
-for t in ['Balance - her face is in the centre, with text on both sides.',
-          'Contrast - bright face against a dark background, and green against blue.',
-          'Emphasis - the green bar in the middle is the first thing you notice.',
-          'Movement - your eye goes from the title, down her face, to the bar, then to '
-          '"FINISH MY SENTENCE."',
-          'Repetition - I used the same green on the small headings, the line, the bar and '
-          '"SENTENCE."',
-          'Unity - I only used two fonts and the same colours everywhere.',
-          'Rhythm - the three small cover lines are all set up the same way.']:
-    a(t, True)
+ep('Balance', 'Her face is right in the centre and the title is centred at the top, so the cover '
+   'is balanced from left to right. I balanced the text around her too: two cover lines on the '
+   'left and one on the right, and the big main cover line at the bottom left with the barcode '
+   'at the bottom right.')
+ep('Contrast', 'I used contrast in three ways: a bright face against a dark background, bright '
+   'green against dark blue, and a huge heavy title against the small thin selling line above '
+   'it. The strongest contrast is the light bar and green box on the darker part of her face, '
+   'so that is what gets noticed first.')
+ep('Emphasis', 'The keyboard bar is the focal point. It is in the middle of the page, it has the '
+   'only bright green box, and it is where her mouth should be, which looks strange and makes '
+   'you look twice. That is on purpose, because the bar is my main message.')
+ep('Movement', 'Your eye starts at PROMPT at the top, moves down her face to her eyes, then to '
+   'the bar, then down to "FINISH MY SENTENCE." at the bottom. The green on the title line, the '
+   'bar and "SENTENCE." works like stepping stones that lead your eye down the page.')
+ep('Repetition', 'I repeated the same green four times. I also set up all three small cover '
+   'lines the exact same way: a small green word on top and bold white text underneath. '
+   'Repeating things like a real magazine does makes the cover look planned and professional.')
+ep('Unity', 'I only used two fonts, Manrope and Roboto, and the same few colours everywhere. '
+   'Turning the photo dark blue made it match the dark background, so the photo and the text '
+   'look like one design instead of separate pieces put together.')
+ep('Rhythm', 'The three small cover lines follow the same pattern (green heading, then three '
+   'short lines of white text) and are spaced out down the sides. Seeing the same pattern '
+   'again and again gives the cover a steady beat as you read it.')
 
 q('Checklist')
 for t in ['8.5" x 11" at 300 ppi, in colour.',
