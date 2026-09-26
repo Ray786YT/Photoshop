@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Arena 1v1</title>
+<style>
+  :root {
+    --red: #da292a;
+    --shield: #3fa9f5;
+    --hp: #f1f1f1;
+    --ink: #0e1116;
+    --panel: rgba(14, 17, 22, 0.86);
+    --line: rgba(255, 255, 255, 0.14);
+    --text: #e9edf1;
+    --muted: #9aa5b1;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; overflow: hidden; background: #0e1116; color: var(--text);
+    font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif; user-select: none; }
+  canvas#game { position: fixed; inset: 0; width: 100%; height: 100%; display: block; }
+  .hidden { display: none !important; }
+
+  /* ---------- overlays ---------- */
+  .overlay { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
+    background: radial-gradient(ellipse at 30% 20%, rgba(218, 41, 42, 0.18), transparent 60%), rgba(8, 10, 14, 0.78);
+    backdrop-filter: blur(3px); z-index: 20; padding: 16px; overflow-y: auto; }
+  .panel { background: var(--panel); border: 1px solid var(--line); border-top: 3px solid var(--red);
+    padding: 26px 30px; width: min(760px, 100%); box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5); }
+  h1 { margin: 0; font-size: 44px; letter-spacing: 6px; font-weight: 800; line-height: 1; }
+  h1 span { color: var(--red); }
+  .tag { color: var(--muted); letter-spacing: 3px; font-size: 12px; margin: 8px 0 22px; text-transform: uppercase; }
+  h2 { margin: 0 0 6px; font-size: 30px; letter-spacing: 4px; }
+  .row { display: flex; gap: 12px; flex-wrap: wrap; }
+  button { font: inherit; cursor: pointer; border: 1px solid var(--line); background: rgba(255, 255, 255, 0.06);
+    color: var(--text); padding: 12px 18px; letter-spacing: 2px; text-transform: uppercase; font-weight: 700; font-size: 13px; }
+  button:hover { background: rgba(255, 255, 255, 0.14); }
+  button.primary { background: var(--red); border-color: var(--red); }
+  button.primary:hover { background: #f03a3b; }
+  button.big { flex: 1; padding: 18px; font-size: 16px; min-width: 200px; text-align: left; }
+  button.big small { display: block; font-weight: 400; letter-spacing: 1px; text-transform: none; opacity: 0.8; margin-top: 4px; font-size: 12px; }
+  .seg button { padding: 8px 14px; }
+  .seg button.on { background: var(--text); color: var(--ink); }
+  .settings { margin-top: 22px; display: grid; grid-template-columns: 130px 1fr 52px; gap: 10px 14px; align-items: center; font-size: 13px; }
+  .settings label { color: var(--muted); letter-spacing: 2px; text-transform: uppercase; font-size: 11px; }
+  .settings output { text-align: right; font-variant-numeric: tabular-nums; }
+  .settings .seg { grid-column: 2 / 4; }
+  input[type=range] { width: 100%; accent-color: var(--red); }
+  .controls { margin-top: 22px; display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 6px 18px;
+    font-size: 12px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 16px; }
+  .controls b { display: inline-block; min-width: 58px; color: var(--text); font-weight: 700; }
+  .note { font-size: 12px; color: var(--muted); margin-top: 14px; }
+  .stats { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; margin: 18px 0 22px; }
+  .stats div { background: rgba(255, 255, 255, 0.05); padding: 10px 12px; border-left: 3px solid var(--red); }
+  .stats span { display: block; font-size: 11px; color: var(--muted); letter-spacing: 2px; }
+  .stats b { font-size: 22px; }
+
+  /* ---------- HUD ---------- */
+  #hud { position: fixed; inset: 0; pointer-events: none; z-index: 10; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6); }
+  #fps { position: absolute; top: 8px; left: 10px; font-size: 11px; color: rgba(255, 255, 255, 0.55); font-variant-numeric: tabular-nums; }
+  #score { position: absolute; top: 12px; left: 50%; transform: translateX(-50%); display: flex; gap: 18px; align-items: center;
+    background: rgba(10, 12, 16, 0.6); padding: 6px 16px; letter-spacing: 2px; font-size: 13px; }
+  #score b { font-size: 22px; margin: 0 4px; }
+  #score .me b { color: var(--shield); }
+  #score .them b { color: var(--red); }
+  #roundLbl { color: var(--muted); font-size: 11px; }
+  #enemy { position: absolute; top: 58px; left: 50%; transform: translateX(-50%); width: 240px; }
+  .ename { font-size: 11px; letter-spacing: 3px; text-align: center; margin-bottom: 4px; }
+  .bar { height: 8px; background: rgba(0, 0, 0, 0.45); position: relative; margin-top: 3px; overflow: hidden; }
+  .bar i { position: absolute; inset: 0 auto 0 0; width: 100%; display: block; transition: width 0.08s linear; }
+  .bar.shield i { background: var(--shield); }
+  .bar.hp i { background: var(--hp); }
+  .bar.hp.low i { background: var(--red); }
+  .segs { position: absolute; inset: 0; background: repeating-linear-gradient(90deg, transparent 0 calc(25% - 2px), rgba(0,0,0,0.7) calc(25% - 2px) 25%); }
+  #rangeStats { position: absolute; top: 12px; right: 14px; background: rgba(10, 12, 16, 0.6); padding: 10px 14px; font-size: 12px;
+    letter-spacing: 1px; min-width: 190px; }
+  #rangeStats div { display: flex; justify-content: space-between; gap: 16px; }
+  #rangeStats b { font-variant-numeric: tabular-nums; }
+  #rangeStats .hint { color: var(--muted); font-size: 11px; margin-top: 6px; display: block; }
+
+  #crosshair { position: absolute; left: 50%; top: 50%; width: 0; height: 0; }
+  #crosshair i { position: absolute; background: #fff; box-shadow: 0 0 2px rgba(0, 0, 0, 0.9); }
+  #crosshair .t, #crosshair .b { width: 2px; height: 8px; left: -1px; }
+  #crosshair .l, #crosshair .r { width: 8px; height: 2px; top: -1px; }
+  #crosshair .dot { width: 2px; height: 2px; left: -1px; top: -1px; }
+  #crosshair.ads i:not(.dot) { display: none; }
+  #crosshair.ads .dot { width: 4px; height: 4px; left: -2px; top: -2px; border-radius: 50%; background: #ff3b3b; }
+  #crosshair.off { display: none; }
+  #hitmarker { position: absolute; left: 50%; top: 50%; width: 26px; height: 26px; margin: -13px 0 0 -13px; opacity: 0; }
+  #hitmarker::before, #hitmarker::after { content: ""; position: absolute; left: 50%; top: 0; width: 2px; height: 100%; margin-left: -1px;
+    background: linear-gradient(#fff 0 32%, transparent 32% 68%, #fff 68%); }
+  #hitmarker::before { transform: rotate(45deg); }
+  #hitmarker::after { transform: rotate(-45deg); }
+  #hitmarker.head::before, #hitmarker.head::after { background: linear-gradient(#ffd23f 0 34%, transparent 34% 66%, #ffd23f 66%); }
+  #hitmarker.kill::before, #hitmarker.kill::after { background: linear-gradient(var(--red) 0 36%, transparent 36% 64%, var(--red) 64%); }
+  #dmgNums div { position: absolute; left: 0; top: 0; font-weight: 800; font-size: 18px; white-space: nowrap; will-change: transform, opacity; }
+  #dmgDir { position: absolute; left: 50%; top: 50%; width: 0; height: 0; opacity: 0; }
+  #dmgDir i { position: absolute; left: -60px; top: -150px; width: 120px; height: 26px;
+    background: radial-gradient(ellipse at 50% 100%, rgba(218, 41, 42, 0.95), rgba(218, 41, 42, 0) 70%); border-radius: 50% 50% 0 0; }
+  #center { position: absolute; left: 0; right: 0; top: 30%; text-align: center; }
+  #centerBig { font-size: 56px; font-weight: 800; letter-spacing: 8px; }
+  #centerSub { font-size: 14px; letter-spacing: 4px; color: #d7dde3; margin-top: 6px; }
+  #healProg { position: absolute; left: 50%; top: 62%; transform: translateX(-50%); width: 220px; text-align: center; font-size: 11px; letter-spacing: 3px; }
+  #healProg .bar i { background: #7dd87d; transition: none; }
+  #vitals { position: absolute; left: 22px; bottom: 22px; width: 300px; }
+  #vitals .lbl { font-size: 11px; letter-spacing: 3px; color: var(--muted); display: flex; justify-content: space-between; }
+  #vitals .bar { height: 12px; }
+  #loadout { position: absolute; right: 22px; bottom: 22px; text-align: right; }
+  #ammo { font-size: 44px; font-weight: 800; line-height: 1; font-variant-numeric: tabular-nums; }
+  #ammo small { font-size: 18px; color: var(--muted); font-weight: 600; }
+  #ammo.empty { color: var(--red); }
+  #wname { font-size: 13px; letter-spacing: 3px; margin: 4px 0 10px; }
+  .slots, .items { display: flex; gap: 6px; justify-content: flex-end; margin-top: 6px; }
+  .slots span, .items span { background: rgba(10, 12, 16, 0.6); border: 1px solid var(--line); padding: 5px 9px; font-size: 11px; letter-spacing: 1px; }
+  .slots span.on { border-color: var(--text); background: rgba(255, 255, 255, 0.16); }
+  .items span.none { opacity: 0.35; }
+  .items span em { font-style: normal; color: var(--muted); margin-right: 4px; }
+  #tac.cd { color: var(--muted); }
+  #hurtFlash { position: absolute; inset: 0; opacity: 0;
+    background: radial-gradient(ellipse at center, transparent 45%, rgba(200, 20, 20, 0.75) 100%); }
+  #lowHp { position: absolute; inset: 0; opacity: 0;
+    background: radial-gradient(ellipse at center, transparent 55%, rgba(120, 0, 0, 0.6) 100%); }
+  #nowebgl { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; text-align: center; padding: 24px; z-index: 50; background: #0e1116; }
+
+  @media (max-width: 640px) {
+    h1 { font-size: 32px; }
+    .panel { padding: 20px 18px; }
+    .settings { grid-template-columns: 100px 1fr 44px; }
+    #vitals { width: 180px; left: 12px; bottom: 12px; }
+    #loadout { right: 12px; bottom: 12px; }
+    #ammo { font-size: 30px; }
+  }
+</style>
+</head>
+<body>
+<canvas id="game"></canvas>
+
+<!-- ============ HUD ============ -->
+<div id="hud" class="hidden">
+  <div id="fps"></div>
+  <div id="score">
+    <span class="me">YOU<b id="scoreMe">0</b></span>
+    <span id="roundLbl">ROUND 1 · FIRST TO 3</span>
+    <span class="them"><b id="scoreBot">0</b>BOT</span>
+  </div>
+  <div id="enemy" class="hidden">
+    <div class="ename" id="enemyName">BOT</div>
+    <div class="bar shield"><i id="eShield"></i><span class="segs"></span></div>
+    <div class="bar hp"><i id="eHp"></i></div>
+  </div>
+  <div id="rangeStats" class="hidden">
+    <div><span>DAMAGE</span><b id="rsDmg">0</b></div>
+    <div><span>ACCURACY</span><b id="rsAcc">0%</b></div>
+    <div><span>HEADSHOTS</span><b id="rsHead">0</b></div>
+    <div><span>KNOCKS</span><b id="rsKills">0</b></div>
+    <span class="hint">T — reset stats · ammo &amp; heals are unlimited</span>
+  </div>
+  <div id="crosshair"><i class="t"></i><i class="b"></i><i class="l"></i><i class="r"></i><i class="dot"></i></div>
+  <div id="hitmarker"></div>
+  <div id="dmgNums"></div>
+  <div id="dmgDir"><i></i></div>
+  <div id="center"><div id="centerBig"></div><div id="centerSub"></div></div>
+  <div id="healProg" class="hidden"><div id="healName"></div><div class="bar"><i id="healFill"></i></div></div>
+  <div id="vitals">
+    <div class="lbl"><span>SHIELD</span><span id="pShieldNum">100</span></div>
+    <div class="bar shield"><i id="pShield"></i><span class="segs"></span></div>
+    <div class="lbl" style="margin-top:6px"><span>HEALTH</span><span id="pHpNum">100</span></div>
+    <div class="bar hp" id="pHpBar"><i id="pHp"></i></div>
+  </div>
+  <div id="loadout">
+    <div id="ammo">28<small> / 224</small></div>
+    <div id="wname">CARBINE</div>
+    <div class="slots"><span id="slot1">1 CARBINE</span><span id="slot2">2 SCATTERGUN</span></div>
+    <div class="items">
+      <span id="itCell"><em>3</em>CELL ×<b>4</b></span>
+      <span id="itSyr"><em>4</em>SYRINGE ×<b>4</b></span>
+      <span id="itBat"><em>5</em>BATTERY ×<b>2</b></span>
+      <span id="tac"><em>Q</em>DASH</span>
+    </div>
+  </div>
+  <div id="lowHp"></div>
+  <div id="hurtFlash"></div>
+</div>
+
+<!-- ============ MAIN MENU ============ -->
+<div id="menu" class="overlay">
+  <div class="panel">
+    <h1>ARENA <span>1V1</span></h1>
+    <div class="tag">Offline Apex-style duel trainer · no internet needed</div>
+    <div class="row">
+      <button class="big primary" data-mode="duel">1v1 Duel<small>You vs a bot. Shields, heals, first to 3 rounds.</small></button>
+      <button class="big" data-mode="range">Firing Range<small>Moving dummies, unlimited ammo, accuracy stats.</small></button>
+    </div>
+    <div id="settingsHome">
+      <div class="settings" id="settings">
+        <label>Bot difficulty</label>
+        <div class="seg row" id="diffSeg">
+          <button data-diff="easy">Easy</button><button data-diff="normal">Normal</button><button data-diff="hard">Hard</button>
+        </div>
+        <label for="sSens">Sensitivity</label><input id="sSens" type="range" min="0.2" max="4" step="0.05"><output id="oSens"></output>
+        <label for="sAds">ADS sens</label><input id="sAds" type="range" min="0.3" max="1.5" step="0.05"><output id="oAds"></output>
+        <label for="sFov">Field of view</label><input id="sFov" type="range" min="70" max="110" step="1"><output id="oFov"></output>
+        <label for="sVol">Volume</label><input id="sVol" type="range" min="0" max="1" step="0.05"><output id="oVol"></output>
+        <label>Graphics</label>
+        <div class="seg row" id="gfxSeg"><button data-gfx="high">High</button><button data-gfx="low">Low (older PCs)</button></div>
+      </div>
+    </div>
+    <div class="controls">
+      <div><b>WASD</b>Move</div>
+      <div><b>Mouse</b>Aim</div>
+      <div><b>L-Click</b>Shoot</div>
+      <div><b>R-Click</b>Aim down sights</div>
+      <div><b>Shift</b>Sprint (hold)</div>
+      <div><b>Space</b>Jump</div>
+      <div><b>C</b>Crouch / slide</div>
+      <div><b>Q</b>Dash (tactical)</div>
+      <div><b>R</b>Reload</div>
+      <div><b>1 / 2</b>Weapons</div>
+      <div><b>3 4 5</b>Cell / Syringe / Battery</div>
+      <div><b>Esc</b>Pause</div>
+    </div>
+    <div class="note">Tip: sprint, then press C to slide. Break the bot's shield with the Carbine, finish close with the Scattergun.</div>
+  </div>
+</div>
+
+<!-- ============ PAUSE ============ -->
+<div id="pause" class="overlay hidden">
+  <div class="panel">
+    <h2>PAUSED</h2>
+    <div class="row" style="margin-top:14px">
+      <button class="primary" id="btnResume">Resume</button>
+      <button id="btnRestart">Restart</button>
+      <button id="btnQuit">Quit to menu</button>
+    </div>
+    <div id="settingsPause"></div>
+  </div>
+</div>
+
+<!-- ============ MATCH END ============ -->
+<div id="end" class="overlay hidden">
+  <div class="panel">
+    <h2 id="endTitle">VICTORY</h2>
+    <div class="tag" id="endSub"></div>
+    <div class="stats" id="endStats"></div>
+    <div class="row">
+      <button class="primary" id="btnRematch">Rematch</button>
+      <button id="btnMenu">Main menu</button>
+    </div>
+  </div>
+</div>
+
+<div id="nowebgl" class="hidden">
+  <div>
+    <h2>3D graphics are turned off</h2>
+    <p>This browser couldn't start WebGL. Try Chrome, Edge or Firefox, and make sure hardware acceleration is on in the browser settings.</p>
+  </div>
+</div>
+
+<script src="lib/three.min.js"></script>
+<script src="game.js"></script>
+</body>
+</html>
